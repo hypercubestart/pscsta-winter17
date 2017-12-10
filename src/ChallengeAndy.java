@@ -5,11 +5,19 @@ import java.util.Queue;
 public class ChallengeAndy {
     public static void main(String[] args) {
         boolean[][] map = new boolean[][] {
-                {true, true, false, true},
-                {true, false, false, true},
-                {false, false, false, false},
-                {true, true, false, true},
+                {false, true, false, true, false},
+                {true, true, true, true, true},
+                {false, true, false, true, false},
+                {true, true, true, true, true},
+                {false, true, false, true, false}
         };
+
+        /*boolean[][] map = new boolean[][] {
+                {false, true, false, true, false},
+                {true, true, false, false, true},
+                {false, true, false, true, false},
+                {true, true, false, true, true}
+        };*/
 
         System.out.println(islands(map));
     }

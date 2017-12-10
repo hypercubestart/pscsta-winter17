@@ -1,95 +1,76 @@
-import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Challenge {
 
-    static ArrayList<Coordinate> water = new ArrayList<>();
+    static ArrayList<Coordinate> searched = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
+
         boolean[][] map = new boolean[][] {
-                {true, true, false, true},
-                {true, false, false, true},
-                {true, true, false, false},
-                {true, true, false, true},
+                {false, true, false, true, false},
+                {true, true, true, true, true},
+                {false, true, false, true, false},
+                {true, true, true, true, true},
+                {false, true, false, true, false}
         };
+
+        /*boolean[][] map = new boolean[][] {
+                {false, true, false, true, false},
+                {true, true, false, false, true},
+                {false, true, false, true, false},
+                {true, true, false, true, true}
+        };*/
 
         System.out.println(islands(map));
     }
 
     public static int islands(boolean[][] map) {
-
-        ArrayList<Island> islands = new ArrayList<>();
-
+        int counter = 0;
         for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length && !isAccountedFor(i, j, islands, water); j++) {
-                if (!map[i][j]) water.add(new Coordinate(i, j));
+            for (int j = 0; j < map[i].length; j++) {
+                if (contains(searched, new Coordinate(i, j))) continue;
+                if (!map[i][j]) searched.add(new Coordinate(i, j));
                 else {
-                    Island island = new Island(findIsland(i, j, map, new ArrayList<>()));
-                    islands.add(island);
+                    findIsland(i, j, map);
+                    counter++;
                 }
             }
         }
-        return islands.size();
+        return counter;
     }
 
-    public static ArrayList<Coordinate> findIsland(int i, int j, boolean[][] map, ArrayList<Coordinate> traversed) {
+    public static ArrayList<Coordinate> findIsland(int i, int j, boolean[][] map) {
         ArrayList<Coordinate> lands = new ArrayList<>();
         lands.add(new Coordinate(i, j));
-        traversed.add(new Coordinate(i, j));
-        if (i - 1 >= 0 && i - 1 < map.length && !contains(traversed, new Coordinate(i - 1, j))) {
-            if (map[i - 1][j]) lands.addAll(findIsland(i - 1, j, map, traversed));
-            else water.add(new Coordinate(i - 1, j));
-        }
-        if (i + 1 >= 0 && i + 1 < map.length && !contains(traversed, new Coordinate(i + 1, j))) {
-            if (map[i + 1][j]) lands.addAll(findIsland(i + 1, j, map, traversed));
-            else water.add(new Coordinate(i + 1, j));
-        }
-        if (j + 1 >= 0 && j + 1 < map[0].length && !contains(traversed, new Coordinate(i, j + 1))) {
-            if (map[i][j + 1]) lands.addAll(findIsland(i, j + 1, map, traversed));
-            else water.add(new Coordinate(i, j + 1));
-        }
-        if (j - 1 >= 0 && j - 1 < map[0].length && !contains(traversed, new Coordinate(i, j - 1))) {
-            if (map[i][j - 1]) lands.addAll(findIsland(i, j - 1, map, traversed));
-            else water.add(new Coordinate(i, j - 1));
-        }
-        return lands;
+        searched.add(new Coordinate(i, j));
 
-    }
+        for (int k = -1; k <= 1; k += 2) {
+            if (i + k < map.length && i + k >= 0 &&!contains(searched, new Coordinate(i + k, j))) {
+                if (map[i + k][j]) lands.addAll(findIsland(i + k, j, map));
+                else searched.add(new Coordinate(i + k, j));
+            }
 
-    public static boolean isAccountedFor(int i, int j, ArrayList<Island> islands, ArrayList<Coordinate> water) {
-        for (Island island : islands) {
-            for (Coordinate coordinate : island.locations) {
-                if (coordinate.x == i && coordinate.y == j) return true;
+            if (j + k < map[0].length && j + k >= 0 && !contains(searched, new Coordinate(i, j + k))) {
+                if (map[i][j + k]) lands.addAll(findIsland(i, j + k, map));
+                else searched.add(new Coordinate(i, j + k));
             }
         }
-        for (Coordinate coordinate : water) {
-            if (coordinate.x == i && coordinate.y == j) return true;
-        }
-        return false;
-    }
 
-    private static class Island {
-        ArrayList<Coordinate> locations;
-
-        public Island(ArrayList<Coordinate> locations) {
-            this.locations = locations;
-        }
+        return lands;
     }
 
     private static class Coordinate {
-        int x, y;
+        int i, j;
 
-        public Coordinate(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Coordinate(int i, int j) {
+            this.i = i;
+            this.j = j;
         }
     }
 
     private static boolean contains(ArrayList<Coordinate> list, Coordinate test) {
         for (Coordinate coordinate : list) {
-            if (coordinate.x == test.x && coordinate.y == test.y) return true;
+            if (coordinate.i == test.i && coordinate.j == test.j) return true;
         }
         return false;
     }
