@@ -52,6 +52,20 @@ public class ChallengeAndy {
                                 }
                             } catch (Exception e) {
                             }
+                            
+                            try {
+                                if (map[c.i][c.j - 1]) {
+                                    queue.add(new Coordinate(c.i, c.j - 1));
+                                }
+                            } catch (Exception e) {
+                            }
+                            
+                            try {
+                                if (map[c.i - 1][c.j]) {
+                                    queue.add(new Coordinate(c.i - 1, c.j));
+                                }
+                            } catch (Exception e) {
+                            }
                         }
                     }
                 }
